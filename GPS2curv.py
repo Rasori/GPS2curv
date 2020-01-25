@@ -4,7 +4,7 @@
 # ChassisSim software.
 #
 # Creator: Waltteri Koskinen
-# v1.0 24.01.2020
+# v1.1 25.01.2020
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,8 +12,10 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', help='state input file')
-parser.add_argument('-o', '--output', action='store', required=False, metavar='', help='state output filename')
+parser.add_argument('-d', '--delimiter', action='store', default='\t', metavar='', help='specify the delimiter used in the input file')
+parser.add_argument('-o', '--output', action='store', metavar='', help='state output filename')
 parser.add_argument('-p', '--plot', action='store_true', help='plots the track and curvature vectors in it')
+
 args = parser.parse_args()
 
 
@@ -99,9 +101,18 @@ def plot(x, y, k):
     return None
 
 
-if __name__ == "__main__":
+def main():
+    try:
+        long, lat = np.loadtxt(args.input, delimiter=args.delimiter, unpack=True)
+    except OSError as e:
+        print('Error occurred while opening the file.')
+        print(e)
+        return False
+    except ValueError as e:
+        print('Error occurred while reading the file. Check the delimiter in input file. Default is set to "Tab"')
+        print(e)
+        return False
 
-    long, lat = np.loadtxt(args.input, delimiter='\t', unpack=True)
     x, y = gps2meter(long, lat)
     L, curvature, k = curvature_cal(x, y)
 
@@ -109,14 +120,20 @@ if __name__ == "__main__":
     data_to_save = data_to_save.T
 
     if not args.output:  # Output filename
-        filename = args.input.split('.')[0]+'_curv.txt'
+        filename = args.input.split('.')[0] + '_curv.txt'
     else:
         filename = args.output
 
     try:  # Data save
         np.savetxt(filename, data_to_save, fmt='%.6f', delimiter=' ')
-    except OSError:
+    except OSError as e:
         print('Error while saving the data check the output filename if you have specified one.')
+        print(e)
+        return False
 
     if args.plot:  # Vector plot
         plot(x, y, k)
+
+
+if __name__ == "__main__":
+    main()

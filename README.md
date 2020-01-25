@@ -30,3 +30,20 @@ optional arguments:
 ```
 
 The code it self is ready and will not be changed if there is not any problems during further testing with ChassisSim. Altought I am not developping the script actively I am open to have any comments or questions about it.
+
+# v1.1
+Some error messages and handling was added to help debugging if something goes wrong.
+Additionally new argument was added to allow user to specify the delimiter of the input file. Usage as follows:
+```
+usage: GPS2curv.py [-h] [-d] [-o] [-p] input
+
+positional arguments:
+  input              state input file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -d , --delimiter   specify the delimiter used in the input file
+  -o , --output      state output filename
+  -p, --plot         plots the track and curvature vectors in it
+
+```
