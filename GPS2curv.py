@@ -4,7 +4,7 @@
 # ChassisSim software.
 #
 # Creator: Waltteri Koskinen
-# v1.1 25.01.2020
+# v1.2 25.01.2020
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,6 +12,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', help='state input file')
+parser.add_argument('-m', '--meters', action='store_true', help='use if the input file is already in meters')
 parser.add_argument('-d', '--delimiter', action='store', default='\t', metavar='', help='specify the delimiter used in the input file')
 parser.add_argument('-o', '--output', action='store', metavar='', help='state output filename')
 parser.add_argument('-p', '--plot', action='store_true', help='plots the track and curvature vectors in it')
@@ -113,7 +114,12 @@ def main():
         print(e)
         return False
 
-    x, y = gps2meter(long, lat)
+    if not args.meters:
+        x, y = gps2meter(long, lat)
+    else:
+        x = long
+        y = lat
+
     L, curvature, k = curvature_cal(x, y)
 
     data_to_save = np.array([curvature, L])
