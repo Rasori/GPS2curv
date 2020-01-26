@@ -28,7 +28,6 @@ optional arguments:
   -o , --output   state output filename
   -p, --plot      plots the track and curvature vectors in it
 ```
-
 The code it self is ready and will not be changed if there is not any problems during further testing with ChassisSim. Altought I am not developping the script actively I am open to have any comments or questions about it.
 
 # v1.1
@@ -46,6 +45,7 @@ optional arguments:
   -o , --output      state output filename
   -p, --plot         plots the track and curvature vectors in it
 ```
+
 # v1.2
 --meters argument added to allow users to input track files already converted to meters. By default program assumes that the file is in gps coordinates. Usage as follows:
 ```
@@ -60,4 +60,22 @@ optional arguments:
   -d , --delimiter   specify the delimiter used in the input file
   -o , --output      state output filename
   -p, --plot         plots the track and curvature vectors in it
+```
+
+# v1.3
+Although I mentioned that the data filtering wouldn't be part of this project I still included it as there has not been any problems so far. The calculation is simple as it calculates the norm of vector specified with two points. If the norm is shorter than the specified minimum the script will move to next coordinate as long as the minimum length is satisfied. Usage as follows:
+```
+usage: GPS2curv [-h] [-m] [-d] [-f] [-o] [-p] input
+
+positional arguments:
+  input              state input file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -m, --meters       use if the input file is already in meters
+  -d , --delimiter   specify the delimiter used in the input file
+  -f , --filter      specify minimum distance between two points in meters
+  -o , --output      state output filename
+  -p, --plot         plots the track and curvature vectors in it
+
 ```

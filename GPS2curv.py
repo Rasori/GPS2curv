@@ -4,7 +4,7 @@
 # ChassisSim software.
 #
 # Creator: Waltteri Koskinen
-# v1.2 25.01.2020
+# v1.3 26.01.2020
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('input', help='state input file')
 parser.add_argument('-m', '--meters', action='store_true', help='use if the input file is already in meters')
 parser.add_argument('-d', '--delimiter', action='store', default='\t', metavar='', help='specify the delimiter used in the input file')
+parser.add_argument('-f', '--filter', action='store', metavar='', help='specify minimum distance between two points in meters')
 parser.add_argument('-o', '--output', action='store', metavar='', help='state output filename')
 parser.add_argument('-p', '--plot', action='store_true', help='plots the track and curvature vectors in it')
 
@@ -93,6 +94,24 @@ def circumcenter (B, A, C):
     return R, k
 
 
+def filter(x, y):
+    """
+    Filters data points based on distance between them. Uses filter argument to determinate minimum distance parameter.
+    :param x: in meters
+    :param y: in meters
+    :return: Returns filtered x, y coordinates
+    """
+
+    x_filt = [x[0]]
+    y_filt = [y[0]]
+    for i in range(len(x)-1):
+        if np.sqrt((x[i+1]-x_filt[-1])**2+(y[i+1]-y_filt[-1])**2) > float(args.filter):
+            x_filt.append(x[i+1])
+            y_filt.append(y[i+1])
+
+    return x_filt, y_filt
+
+
 def plot(x, y, k):
     plt.plot(x, y)
     plt.quiver(x, y, k[:, 0], k[:, 1], color='red')
@@ -119,6 +138,10 @@ def main():
     else:
         x = long
         y = lat
+
+    if args.filter:
+        x, y = filter(x, y)
+
 
     L, curvature, k = curvature_cal(x, y)
 
