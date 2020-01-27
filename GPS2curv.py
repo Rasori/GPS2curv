@@ -10,16 +10,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('input', help='state input file')
-parser.add_argument('-m', '--meters', action='store_true', help='use if the input file is already in meters')
-parser.add_argument('-d', '--delimiter', action='store', default='\t', metavar='', help='specify the delimiter used in the input file')
-parser.add_argument('-f', '--filter', action='store', metavar='', help='specify minimum distance between two points in meters')
-parser.add_argument('-o', '--output', action='store', metavar='', help='state output filename')
-parser.add_argument('-p', '--plot', action='store_true', help='plots the track and curvature vectors in it')
-
-args = parser.parse_args()
-
 
 def gps2meter(long, lat):
     """
@@ -94,7 +84,7 @@ def circumcenter (B, A, C):
     return R, k
 
 
-def filter(x, y):
+def filter(x, y, min_dist):
     """
     Filters data points based on distance between them. Uses filter argument to determinate minimum distance parameter.
     :param x: in meters
@@ -105,7 +95,7 @@ def filter(x, y):
     x_filt = [x[0]]
     y_filt = [y[0]]
     for i in range(len(x)-1):
-        if np.sqrt((x[i+1]-x_filt[-1])**2+(y[i+1]-y_filt[-1])**2) > float(args.filter):
+        if np.sqrt((x[i+1]-x_filt[-1])**2+(y[i+1]-y_filt[-1])**2) > float(min_dist):
             x_filt.append(x[i+1])
             y_filt.append(y[i+1])
 
@@ -122,6 +112,21 @@ def plot(x, y, k):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input', help='state input file')
+    parser.add_argument('-m', '--meters', action='store_true',
+                        help='use if the input file is already in meters')
+    parser.add_argument('-d', '--delimiter', action='store', default='\t',
+                        help='specify the delimiter used in the input file')
+    parser.add_argument('-f', '--filter', action='store',
+                        help='specify minimum distance between two points in meters')
+    parser.add_argument('-o', '--output', action='store',
+                        help='state output filename')
+    parser.add_argument('-p', '--plot', action='store_true',
+                        help='plots the track and curvature vectors in it')
+
+    args = parser.parse_args()
+
     try:
         long, lat = np.loadtxt(args.input, delimiter=args.delimiter, unpack=True)
     except OSError as e:
@@ -140,7 +145,7 @@ def main():
         y = lat
 
     if args.filter:
-        x, y = filter(x, y)
+        x, y = filter(x, y, args.filter)
 
 
     L, curvature, k = curvature_cal(x, y)
