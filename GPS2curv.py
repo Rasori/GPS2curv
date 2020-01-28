@@ -4,7 +4,7 @@
 # ChassisSim software.
 #
 # Creator: Waltteri Koskinen
-# v1.3 26.01.2020
+# v1.4 28.01.2020
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -53,7 +53,7 @@ def curvature_cal(x, y):
         k = np.append(k, [np.transpose(k_i)], axis=0)
         L.append(L[i]+np.linalg.norm(track[i, :]-track[i-1, :]))
         sign = np.sign(np.cross(track[i+1, :]-track[i, :], k_i)[2])
-        curvature.append(R**(-1)*sign)
+        curvature.append(R**(-1)*sign*(-1))
 
     return L, curvature, k
 
@@ -67,6 +67,9 @@ def circumcenter (B, A, C):
     :param C: coordinates (x,y) of point after
     :return: R_adius of each section and components of k_urvature vector
     """
+    A = A.T
+    B = B.T
+    C = C.T
 
     D = np.cross(B-A, C-A)
     b = np.linalg.norm(A-C)
@@ -87,6 +90,7 @@ def circumcenter (B, A, C):
 def filter(x, y, min_dist):
     """
     Filters data points based on distance between them. Uses filter argument to determinate minimum distance parameter.
+    :param min_dist: Minimum distance between two points in meters
     :param x: in meters
     :param y: in meters
     :return: Returns filtered x, y coordinates
@@ -146,7 +150,6 @@ def main():
 
     if args.filter:
         x, y = filter(x, y, args.filter)
-
 
     L, curvature, k = curvature_cal(x, y)
 
