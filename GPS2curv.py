@@ -4,7 +4,7 @@
 # ChassisSim software.
 #
 # Creator: Waltteri Koskinen
-# v1.4 28.01.2020
+# v1.5 13.03.2023
 
 import numpy as np
 from matplotlib import pyplot as plt
