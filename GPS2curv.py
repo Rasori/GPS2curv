@@ -107,9 +107,10 @@ def filter(x, y, min_dist):
 
 
 def plot(x, y, k):
-    plt.plot(x, y)
+    plt.plot(x, y, 'o-')
     plt.quiver(x[1:], y[1:], k[:, 0], k[:, 1], color='red')
     plt.grid('both')
+    plt.axis("scaled")
     plt.show()
 
     return None
